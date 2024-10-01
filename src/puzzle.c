@@ -1,8 +1,25 @@
 #include "sudoku.h"
 
-Square *** setUpPuzzle(int ** puzzle){
+
+Sudoku * createSudoku(Square *** squares, Box ** boxes){
+    Sudoku * sudoku;
+    sudoku = malloc(sizeof(Sudoku));
+
+    sudoku->squares = squares;
+    sudoku->boxes = boxes;
+
+    return sudoku;
+}
+
+
+
+Sudoku * setUpPuzzle(int ** puzzle){
     Square *** sudoku;
+    Box ** boxes;
     int i,j,x;
+    int currentBox = 0;
+
+    boxes = createBoxes();
 
 
     sudoku = (Square***)malloc(sizeof(Square**)*9);
@@ -20,10 +37,31 @@ Square *** setUpPuzzle(int ** puzzle){
             sudoku[i][j]->column = j; 
             sudoku[i][j]->solvable = 9;
 
+            boxes[currentBox]->squares[boxes[currentBox]->numbers] = sudoku[i][j];
+            sudoku[i][j]->box = boxes[currentBox]; 
+            boxes[currentBox]->numbers++;          
+
             for(x = 0; x<SIZE_ROWS; x++){
                 sudoku[i][j]->possible[x] = 0;
-            }       
+            }    
 
+            if(j == 2){
+                currentBox++;
+            }   
+        
+            if(j == 5){
+                currentBox++;
+            }
+
+        }
+
+        currentBox -=2;
+        if(i == 2){
+            currentBox = 3;
+        }
+
+        if(i ==5   ){
+            currentBox = 6;
         }
 
     }
@@ -34,13 +72,14 @@ Square *** setUpPuzzle(int ** puzzle){
             if(sudoku[i][j]->number != 0){
                 sudoku[i][j]->solvable = 0;
                 updateSudoku(sudoku, i, j);
+                updateBoxes(sudoku, i, j);
                 UNSOLVED--; 
 
             }
         }
 
     } 
-    return sudoku;  
+    return createSudoku(sudoku, boxes);  
 
 }
 
@@ -65,7 +104,7 @@ int updateSudoku(Square *** sudoku, int row, int column){
     return 1;
 }
 
-int checkPuzzle(Square ***  sudoku){
+int checkPuzzle(Square ***  sudoku, Box ** boxes){
     int i, j, x;
 
     for(i=0; i < SIZE_ROWS;i++){
@@ -74,10 +113,12 @@ int checkPuzzle(Square ***  sudoku){
             if(sudoku[i][j]->solvable == 1){
                 solveSquare(sudoku[i][j]);
                 updateSudoku(sudoku,i,j);
+                updateBoxes(sudoku,i,j);
+                return 1;
             }
         }
     }
-    return 1; 
+    return boxSingles(sudoku, boxes);
 }
  
 

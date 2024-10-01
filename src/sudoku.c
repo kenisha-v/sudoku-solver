@@ -8,15 +8,28 @@ int SIZE_COLUMNS = 9;
 int main(){
 
     int** puzzle; 
-    Square *** sudoku;
+    Sudoku  * sudoku;
+    int progress; 
 
     puzzle = create_puzzle();
     sudoku = setUpPuzzle(puzzle);
-    printpuzzle(sudoku);
+    printpuzzle(sudoku->squares);
  
-    checkPuzzle(sudoku);
+
+    while(UNSOLVED > 0){
+        progress = checkPuzzle(sudoku->squares, sudoku->boxes);
+
+        if(progress == 0){
+            printf("Failed to solve the puzzle!\n\n");
+            break;
+        }
+
+    }
+
+
+
     printf("\n\n"); 
-    printpuzzle(sudoku);
+    printpuzzle(sudoku->squares);
 
 
     return 0;   
