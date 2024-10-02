@@ -13,7 +13,7 @@ int checkRows(Square *** sudoku, Box ** boxes){
             sum[j] = 0;            
         }
         for(j=0; j<9;j++){
-            if(sudoku[i][j] != 0){
+            if(sudoku[i][j]->number != 0){
                 continue;
             }
             //loop possibles
